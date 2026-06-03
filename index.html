@@ -2,56 +2,276 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>내 채널 동영상 아카이브</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영어 필수 관용구 1000 개 프로젝트 아카이브</title>
     <style>
-        body { font-family: 'Malgun Gothic', sans-serif; margin: 20px; background-color: #f9f9f9; }
-        .player-section { display: flex; gap: 20px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .controls { display: flex; flex-direction: column; gap: 15px; justify-content: center; }
-        .search-section { margin-bottom: 20px; }
-        .search-bar { width: 100%; max-width: 400px; padding: 10px; font-size: 16px; border: 2px solid #007bff; border-radius: 4px; }
-        .video-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 15px; }
-        .video-item { background: white; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
-        .video-item:hover { transform: scale(1.03); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-        .thumbnail-wrapper { position: relative; width: 100%; padding-top: 56.25%; }
-        .thumbnail-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-        .video-title { padding: 10px; font-size: 13px; font-weight: bold; line-height: 1.4; color: #333; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        :root {
+            color-scheme: light dark;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            margin: 20px;
+            background-color: Canvas;
+            color: CanvasText;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .player-section {
+            display: flex;
+            gap: 20px;
+            background: Canvas;
+            color: CanvasText;
+            padding: 20px;
+            border: 1px solid GrayText;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+
+        #main-player {
+            flex: 0 0 auto;
+            width: 640px;
+            max-width: 100%;
+            aspect-ratio: 16 / 9;
+        }
+
+        .side-panel {
+            flex: 1;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .search-section {
+            width: 100%;
+        }
+
+        .search-bar {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            font-size: 16px;
+            color: FieldText;
+            background-color: Field;
+            border: 2px solid Highlight;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .search-bar:focus {
+            box-shadow: 0 0 0 3px color-mix(in srgb, Highlight 25%, transparent);
+        }
+
+        .current-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #current-playing-title {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+
+        .auto-play-note {
+            margin: 0;
+            color: CanvasText;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
+        .next-button {
+            align-self: flex-start;
+            padding: 8px 15px;
+            background: Highlight;
+            color: HighlightText;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .next-button:hover {
+            filter: brightness(0.95);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .video-item {
+            background: Canvas;
+            color: CanvasText;
+            border: 1px solid GrayText;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .video-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            background: Canvas;
+        }
+
+        .thumbnail-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-title {
+            padding: 10px;
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 1.4;
+            color: CanvasText;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+
+        .load-more-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin: 24px 0 10px;
+        }
+
+        .result-count {
+            font-size: 14px;
+            color: CanvasText;
+            opacity: 0.75;
+        }
+
+        .load-more-button {
+            padding: 10px 24px;
+            background: Highlight;
+            color: HighlightText;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .load-more-button:hover {
+            filter: brightness(0.95);
+        }
+
+        .load-more-button[hidden] {
+            display: none;
+        }
+
+        @media (max-width: 980px) {
+            .player-section {
+                flex-direction: column;
+            }
+
+            #main-player {
+                width: 100%;
+            }
+
+            .side-panel {
+                width: 100%;
+            }
+
+            .video-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 12px;
+            }
+
+            .player-section {
+                padding: 12px;
+            }
+
+            .video-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <h2>내 채널 동영상 라이브러리 (연속 재생 제공)</h2>
+    <h2>영어 필수 관용구 1000 개 프로젝트 아카이브 - 구독자 전용</h2>
 
     <div class="player-section">
         <div id="main-player"></div>
-        <div class="controls">
-            <h3 id="current-playing-title">재생할 영상을 아래에서 선택하세요</h3>
-            <p style="color: green; font-weight: bold;">※ 현재 검색된 목록 순서대로 자동 연속 재생됩니다.</p>
-            <button onclick="playNextVideo()" style="padding: 8px 15px; background: #007bff; color: white; border:none; border-radius:4px; cursor:pointer;">다음 영상 건너뛰기</button>
-        </div>
-    </div>
 
-    <div class="search-section">
-        <input type="text" id="searchBar" class="search-bar" placeholder="동영상 제목 검색..." oninput="filterVideos()">
+        <div class="side-panel">
+            <div class="search-section">
+                <input
+                    type="text"
+                    id="searchBar"
+                    class="search-bar"
+                    placeholder="동영상 제목 검색..."
+                    oninput="filterVideos()"
+                >
+            </div>
+
+            <div class="current-info">
+                <h3 id="current-playing-title">재생할 영상을 아래에서 선택하세요</h3>
+                <p class="auto-play-note">※ 현재 검색된 목록 순서대로 자동 연속 재생됩니다.</p>
+                <button class="next-button" onclick="playNextVideo()">다음 영상 건너뛰기</button>
+            </div>
+        </div>
     </div>
 
     <div class="video-grid" id="videoGrid"></div>
 
+    <div class="load-more-wrap">
+        <div class="result-count" id="resultCount"></div>
+        <button class="load-more-button" id="loadMoreButton" onclick="loadMoreVideos()">더 보기</button>
+    </div>
+
     <script>
-        // ⚠️ 테스트 하실 때 실제 존재하는 본인 유튜브 영상 ID 11자리를 꼭 넣어주세요!
+        // 
         const videoList = [
-            { id: 'dQw4w9WgXcQ', title: '[샘플 1] 실제 작동 테스트 영상' },
-            { id: 'kJQP7kiw5Fk', title: '[샘플 2] 연속 재생 테스트 영상' },
-	{ id: 'NsJuts4FHJo', title: '[관용구] beat around bush'},
+//itemlist//
+//            { id: 'dQw4w9WgXcQ', title: '[샘플 1] 실제 작동 테스트 영상' },
+//            { id: 'kJQP7kiw5Fk', title: '[샘플 2] 연속 재생 테스트 영상' },
+//            { id: 'NsJuts4FHJo', title: '[관용구] beat around bush' },
         ];
 
-        let filteredList = [...videoList]; 
-        let currentTrackIndex = 0;        
+        const PAGE_SIZE = 100;
+
+        let filteredList = [...videoList];
+        let currentTrackIndex = 0;
+        let visibleCount = PAGE_SIZE;
         let player;
 
         // API 로드
-        var tag = document.createElement('script');
+        const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
+        const firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         function onYouTubeIframeAPIReady() {
@@ -62,33 +282,40 @@
                 width: '640',
                 videoId: filteredList[0].id,
                 playerVars: {
-                    'autoplay': 0,
-                    'rel': 0,            // 추천 영상 제한
-                    'origin': window.location.origin // 보안 오류 방지 매개변수 추가
+                    autoplay: 0,
+                    rel: 0,
+                    origin: window.location.origin
                 },
                 events: {
-                    'onStateChange': onPlayerStateChange,
-                    'onReady': onPlayerReady
+                    onStateChange: onPlayerStateChange,
+                    onReady: onPlayerReady
                 }
             });
         }
 
         function onPlayerReady() {
-            if(filteredList[0]) {
+            if (filteredList[0]) {
                 document.getElementById('current-playing-title').innerText = filteredList[0].title;
             }
         }
 
         function renderVideoGrid(list) {
             const grid = document.getElementById('videoGrid');
-            grid.innerHTML = ''; 
+            const loadMoreButton = document.getElementById('loadMoreButton');
+            const resultCount = document.getElementById('resultCount');
+
+            grid.innerHTML = '';
 
             if (list.length === 0) {
-                grid.innerHTML = '<p style="grid-column: span 5; text-align:center; color:gray;">검색 결과가 없습니다.</p>';
+                grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; color:GrayText;">검색 결과가 없습니다.</p>';
+                resultCount.innerText = '총 0개';
+                loadMoreButton.hidden = true;
                 return;
             }
 
-            list.forEach((video, index) => {
+            const visibleList = list.slice(0, visibleCount);
+
+            visibleList.forEach((video, index) => {
                 const item = document.createElement('div');
                 item.className = 'video-item';
                 item.onclick = () => selectVideo(index);
@@ -97,34 +324,46 @@
 
                 item.innerHTML = `
                     <div class="thumbnail-wrapper">
-                        <img src="${thumbUrl}" alt="thumbnail">
+                        <img src="${thumbUrl}" alt="thumbnail" loading="lazy">
                     </div>
                     <div class="video-title">${video.title}</div>
                 `;
                 grid.appendChild(item);
             });
+
+            const shownCount = Math.min(visibleCount, list.length);
+            resultCount.innerText = `총 ${list.length}개 중 ${shownCount}개 표시`;
+            loadMoreButton.hidden = shownCount >= list.length;
         }
 
         function filterVideos() {
-            const query = document.getElementById('searchBar').value.toLowerCase();
+            const query = document.getElementById('searchBar').value.toLowerCase().trim();
             filteredList = videoList.filter(video => video.title.toLowerCase().includes(query));
+            visibleCount = PAGE_SIZE;
             renderVideoGrid(filteredList);
-            currentTrackIndex = 0; 
+            currentTrackIndex = 0;
+        }
+
+        function loadMoreVideos() {
+            visibleCount += PAGE_SIZE;
+            renderVideoGrid(filteredList);
         }
 
         function selectVideo(index) {
             if (filteredList.length === 0) return;
+
             currentTrackIndex = index;
             const video = filteredList[currentTrackIndex];
+
             if (player && video) {
                 document.getElementById('current-playing-title').innerText = video.title;
                 player.loadVideoById(video.id);
             }
         }
 
-        // 영상이 끝났을 때(ENDED) 어뷰징 없는 자연스러운 다음 곡 재생
+        // 영상이 끝났을 때(ENDED) 현재 검색된 목록 기준으로 다음 영상 재생
         function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.ENDED) {
+            if (event.data === YT.PlayerState.ENDED) {
                 playNextVideo();
             }
         }
@@ -136,7 +375,7 @@
         }
 
         window.onload = function() {
-            renderVideoGrid(videoList);
+            renderVideoGrid(filteredList);
         };
     </script>
 </body>
