@@ -540,7 +540,6 @@
 { id: 'g3JNHMf8eOM', title: "257. keep one's head above water" },
 { id: 'nPAT49Arae8', title: "258. on the grounds that" },
 { id: 'NsJuts4FHJo', title: "259. beat around the bush" },
-
         ];
 
         const PAGE_SIZE = 100;
@@ -560,10 +559,17 @@
         function onYouTubeIframeAPIReady() {
             if (filteredList.length === 0) return;
 
+            const lastVideoId = localStorage.getItem('lastVideoId');
+            const lastVideo = videoList.find(v => v.id === lastVideoId);
+            const defaultVideo = lastVideo || filteredList[0];
+
+            currentTrackIndex = filteredList.findIndex(v => v.id === defaultVideo.id);
+            if (currentTrackIndex < 0) currentTrackIndex = 0;
+
             player = new YT.Player('main-player', {
                 height: '360',
                 width: '640',
-                videoId: filteredList[0].id,
+                videoId: defaultVideo.id,
                 playerVars: {
                     autoplay: 0,
                     rel: 0,
@@ -577,8 +583,9 @@
         }
 
         function onPlayerReady() {
-            if (filteredList[0]) {
-                document.getElementById('current-playing-title').innerText = filteredList[0].title;
+            if (filteredList[currentTrackIndex]) {
+                document.getElementById('current-playing-title').innerText =
+                    filteredList[currentTrackIndex].title;
             }
         }
 
@@ -660,6 +667,7 @@
             const video = filteredList[currentTrackIndex];
 
             if (player && video) {
+                localStorage.setItem('lastVideoId', video.id);
                 document.getElementById('current-playing-title').innerText = video.title;
                 player.loadVideoById(video.id);
             }
