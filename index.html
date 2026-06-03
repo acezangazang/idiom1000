@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>내 채널 동영상 아카이브</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; margin: 20px; background-color: #f9f9f9; }
+        .player-section { display: flex; gap: 20px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .controls { display: flex; flex-direction: column; gap: 15px; justify-content: center; }
+        .search-section { margin-bottom: 20px; }
+        .search-bar { width: 100%; max-width: 400px; padding: 10px; font-size: 16px; border: 2px solid #007bff; border-radius: 4px; }
+        .video-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 15px; }
+        .video-item { background: white; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
+        .video-item:hover { transform: scale(1.03); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .thumbnail-wrapper { position: relative; width: 100%; padding-top: 56.25%; }
+        .thumbnail-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .video-title { padding: 10px; font-size: 13px; font-weight: bold; line-height: 1.4; color: #333; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+    <h2>내 채널 동영상 라이브러리 (연속 재생 제공)</h2>
+
+    <div class="player-section">
+        <div id="main-player"></div>
+        <div class="controls">
+            <h3 id="current-playing-title">재생할 영상을 아래에서 선택하세요</h3>
+            <p style="color: green; font-weight: bold;">※ 현재 검색된 목록 순서대로 자동 연속 재생됩니다.</p>
+            <button onclick="playNextVideo()" style="padding: 8px 15px; background: #007bff; color: white; border:none; border-radius:4px; cursor:pointer;">다음 영상 건너뛰기</button>
+        </div>
+    </div>
+
+    <div class="search-section">
+        <input type="text" id="searchBar" class="search-bar" placeholder="동영상 제목 검색..." oninput="filterVideos()">
+    </div>
+
+    <div class="video-grid" id="videoGrid"></div>
+
+    <script>
+        // ⚠️ 테스트 하실 때 실제 존재하는 본인 유튜브 영상 ID 11자리를 꼭 넣어주세요!
+        const videoList = [
+            { id: 'dQw4w9WgXcQ', title: '[샘플 1] 실제 작동 테스트 영상' },
+            { id: 'kJQP7kiw5Fk', title: '[샘플 2] 연속 재생 테스트 영상' },
+	{ id: 'NsJuts4FHJo', title: '[관용구] beat around bush'},
+        ];
+
+        let filteredList = [...videoList]; 
+        let currentTrackIndex = 0;        
+        let player;
+
+        // API 로드
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        function onYouTubeIframeAPIReady() {
+            if (filteredList.length === 0) return;
+
+            player = new YT.Player('main-player', {
+                height: '360',
+                width: '640',
+                videoId: filteredList[0].id,
+                playerVars: {
+                    'autoplay': 0,
+                    'rel': 0,            // 추천 영상 제한
+                    'origin': window.location.origin // 보안 오류 방지 매개변수 추가
+                },
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady() {
+            if(filteredList[0]) {
+                document.getElementById('current-playing-title').innerText = filteredList[0].title;
+            }
+        }
+
+        function renderVideoGrid(list) {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = ''; 
+
+            if (list.length === 0) {
+                grid.innerHTML = '<p style="grid-column: span 5; text-align:center; color:gray;">검색 결과가 없습니다.</p>';
+                return;
+            }
+
+            list.forEach((video, index) => {
+                const item = document.createElement('div');
+                item.className = 'video-item';
+                item.onclick = () => selectVideo(index);
+
+                const thumbUrl = `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`;
+
+                item.innerHTML = `
+                    <div class="thumbnail-wrapper">
+                        <img src="${thumbUrl}" alt="thumbnail">
+                    </div>
+                    <div class="video-title">${video.title}</div>
+                `;
+                grid.appendChild(item);
+            });
+        }
+
+        function filterVideos() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            filteredList = videoList.filter(video => video.title.toLowerCase().includes(query));
+            renderVideoGrid(filteredList);
+            currentTrackIndex = 0; 
+        }
+
+        function selectVideo(index) {
+            if (filteredList.length === 0) return;
+            currentTrackIndex = index;
+            const video = filteredList[currentTrackIndex];
+            if (player && video) {
+                document.getElementById('current-playing-title').innerText = video.title;
+                player.loadVideoById(video.id);
+            }
+        }
+
+        // 영상이 끝났을 때(ENDED) 어뷰징 없는 자연스러운 다음 곡 재생
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                playNextVideo();
+            }
+        }
+
+        function playNextVideo() {
+            if (filteredList.length === 0) return;
+            currentTrackIndex = (currentTrackIndex + 1) % filteredList.length;
+            selectVideo(currentTrackIndex);
+        }
+
+        window.onload = function() {
+            renderVideoGrid(videoList);
+        };
+    </script>
+</body>
+</html>
