@@ -57,6 +57,12 @@
             aspect-ratio: 16 / 9;
         }
 
+        #main-player iframe {
+            width: 100% !important;
+            height: 100% !important;
+            aspect-ratio: 16 / 9;
+        }
+
         .side-panel {
             width: 100%;
             display: flex;
@@ -220,6 +226,10 @@
             display: none;
         }
 
+        .mobile-note-section {
+            display: none;
+        }
+
         @media (max-width: 980px) {
             .app-layout {
                 display: block;
@@ -229,23 +239,76 @@
             .player-section {
                 position: sticky;
                 top: 0;
-                flex-direction: column;
+                z-index: 100;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 8px;
                 max-height: none;
                 overflow-y: visible;
-                margin-bottom: 20px;
+                margin-bottom: 10px;
             }
 
             #main-player {
+                order: 1;
                 width: 100%;
+                aspect-ratio: 16 / 9;
+            }
+
+            #current-playing-title {
+                display: none;
+            }
+
+            .player-section > .next-button {
+                order: 2;
+                width: 100%;
+                align-self: stretch;
+                padding: 9px 12px;
+                font-size: 14px;
+            }
+
+            .player-section > .sort-buttons {
+                order: 3;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-top: 0;
+            }
+
+            .player-section > .sort-buttons button {
+                padding: 9px 10px;
+                font-size: 14px;
             }
 
             .side-panel {
+                order: 4;
+                width: 100%;
+                display: block;
+            }
+
+            .search-section {
                 width: 100%;
             }
 
+            .search-bar {
+                padding: 9px 12px;
+                font-size: 15px;
+            }
+
+            .mobile-note-section {
+                display: block;
+                margin: 0 0 10px 0;
+            }
+
+            .auto-play-note {
+                font-size: 13px;
+                line-height: 1.45;
+                font-weight: normal;
+                opacity: 0.75;
+            }
+
             .list-section {
-                height: calc(100vh - 560px);
-                min-height: 260px;
+                height: calc(100vh - 420px);
+                min-height: 280px;
                 overflow-y: auto;
             }
 
@@ -256,7 +319,11 @@
 
         @media (max-width: 600px) {
             body {
-                margin: 12px;
+                margin: 8px;
+            }
+
+            h2 {
+                display: none;
             }
 
             .app-layout {
@@ -265,20 +332,88 @@
             }
 
             .player-section {
-                padding: 12px;
+                padding: 8px;
                 position: sticky;
                 top: 0;
+                gap: 7px;
+                border-radius: 6px;
+            }
+
+            #main-player {
+                order: 1;
+                width: 100%;
+                aspect-ratio: 16 / 9;
+            }
+
+            #main-player iframe {
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            #current-playing-title {
+                display: none;
+            }
+
+            .player-section > .next-button {
+                order: 2;
+                width: 100%;
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+
+            .player-section > .sort-buttons {
+                order: 3;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 7px;
+                margin-top: 0;
+            }
+
+            .player-section > .sort-buttons button {
+                padding: 8px 8px;
+                font-size: 13px;
+            }
+
+            .side-panel {
+                order: 4;
+            }
+
+            .search-bar {
+                padding: 8px 11px;
+                font-size: 14px;
+                border-radius: 18px;
+            }
+
+            .mobile-note-section {
+                display: block;
+                margin: 0 0 10px 0;
+            }
+
+            .auto-play-note {
+                font-size: 12px;
+                line-height: 1.4;
+                font-weight: normal;
+                opacity: 0.7;
             }
 
             .list-section {
-                height: calc(100vh - 520px);
-                min-height: 240px;
+                height: calc(100vh - 330px);
+                min-height: 260px;
                 overflow-y: auto;
             }
 
             .video-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 10px;
+            }
+
+            .video-title {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .load-more-wrap {
+                margin: 16px 0 8px;
             }
         }
     </style>
@@ -309,6 +444,11 @@
 
             </div>
 
+        </div>
+    </div>
+
+        <div class="mobile-note-section">
+
             <div class="current-info">
 
                 <p class="auto-play-note">현재 검색된 목록 순서대로 자동 연속 재생됩니다.</br>
@@ -319,7 +459,6 @@
 
             </div>
         </div>
-    </div>
 
         <div class="list-section">
         <div class="video-grid" id="videoGrid"></div>
