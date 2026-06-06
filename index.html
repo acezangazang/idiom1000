@@ -52,15 +52,20 @@
         }
 
         #main-player {
+            position: relative;
             width: 100%;
             max-width: 100%;
             aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background: #000;
         }
 
         #main-player iframe {
+            position: absolute;
+            inset: 0;
             width: 100% !important;
             height: 100% !important;
-            aspect-ratio: 16 / 9;
+            border: 0;
         }
 
         .side-panel {
@@ -241,7 +246,7 @@
                 top: 0;
                 z-index: 100;
                 display: grid;
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr 1fr minmax(120px, 1.5fr);
                 gap: 8px;
                 max-height: none;
                 overflow-y: visible;
@@ -250,6 +255,7 @@
 
             #main-player {
                 order: 1;
+                grid-column: 1 / -1;
                 width: 100%;
                 aspect-ratio: 16 / 9;
             }
@@ -260,14 +266,17 @@
 
             .player-section > .next-button {
                 order: 2;
+                grid-column: 1;
                 width: 100%;
                 align-self: stretch;
-                padding: 9px 12px;
+                padding: 9px 8px;
                 font-size: 14px;
+                white-space: nowrap;
             }
 
             .player-section > .sort-buttons {
                 order: 3;
+                grid-column: 2 / 4;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 8px;
@@ -275,12 +284,14 @@
             }
 
             .player-section > .sort-buttons button {
-                padding: 9px 10px;
+                padding: 9px 8px;
                 font-size: 14px;
+                white-space: nowrap;
             }
 
             .side-panel {
                 order: 4;
+                grid-column: 4;
                 width: 100%;
                 display: block;
             }
@@ -290,8 +301,9 @@
             }
 
             .search-bar {
-                padding: 9px 12px;
+                padding: 9px 10px;
                 font-size: 15px;
+                height: 100%;
             }
 
             .mobile-note-section {
@@ -307,8 +319,8 @@
             }
 
             .list-section {
-                height: calc(100vh - 420px);
-                min-height: 280px;
+                height: calc(100vh - 360px);
+                min-height: 300px;
                 overflow-y: auto;
             }
 
@@ -335,17 +347,22 @@
                 padding: 8px;
                 position: sticky;
                 top: 0;
-                gap: 7px;
+                display: grid;
+                grid-template-columns: 0.85fr 0.85fr 0.85fr 1.45fr;
+                gap: 6px;
                 border-radius: 6px;
             }
 
             #main-player {
                 order: 1;
+                grid-column: 1 / -1;
                 width: 100%;
                 aspect-ratio: 16 / 9;
             }
 
             #main-player iframe {
+                position: absolute;
+                inset: 0;
                 width: 100% !important;
                 height: 100% !important;
             }
@@ -356,32 +373,39 @@
 
             .player-section > .next-button {
                 order: 2;
+                grid-column: 1;
                 width: 100%;
-                padding: 8px 10px;
-                font-size: 14px;
+                padding: 7px 4px;
+                font-size: 12px;
+                white-space: nowrap;
             }
 
             .player-section > .sort-buttons {
                 order: 3;
+                grid-column: 2 / 4;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 7px;
+                gap: 6px;
                 margin-top: 0;
             }
 
             .player-section > .sort-buttons button {
-                padding: 8px 8px;
-                font-size: 13px;
+                padding: 7px 4px;
+                font-size: 12px;
+                white-space: nowrap;
             }
 
             .side-panel {
                 order: 4;
+                grid-column: 4;
+                width: 100%;
             }
 
             .search-bar {
-                padding: 8px 11px;
-                font-size: 14px;
-                border-radius: 18px;
+                padding: 7px 7px;
+                font-size: 12px;
+                border-radius: 16px;
+                height: 100%;
             }
 
             .mobile-note-section {
@@ -397,8 +421,8 @@
             }
 
             .list-section {
-                height: calc(100vh - 330px);
-                min-height: 260px;
+                height: calc(100vh - 280px);
+                min-height: 300px;
                 overflow-y: auto;
             }
 
@@ -446,10 +470,9 @@
 
         </div>
     </div>
-
-        <div class="mobile-note-section">
-
-            <div class="current-info">
+        <div class="list-section">
+            <div class="mobile-note-section">
+                <div class="current-info">
 
                 <p class="auto-play-note">현재 검색된 목록 순서대로 자동 연속 재생됩니다.</br>
 1000 개 될 때까지 때때로 업데이트 될 것입니다.</br>
@@ -458,9 +481,8 @@
 </p>
 
             </div>
-        </div>
+            </div>
 
-        <div class="list-section">
         <div class="video-grid" id="videoGrid"></div>
 
         <div class="load-more-wrap">
