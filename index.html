@@ -227,6 +227,7 @@
             height: 100%;
             object-fit: cover;
         }
+
 //.viewed-badge {
 //    position: absolute;
 //    top: 6px;
@@ -234,14 +235,11 @@
 //    width: 26px;
 //    height: 26px;
 //    border-radius: 50%;
-//    background: Highlight;
-//    color: HighlightText;
-//    display: flex;
-//    align-items: center;
-//    justify-content: center;
+//    background: #22c55e;
+//    color: white;
 //    font-size: 16px;
 //    font-weight: bold;
-//    z-index: 2;
+//    z-index: 100;
 //}
 .viewed-badge {
     position: absolute;
@@ -252,9 +250,19 @@
     border-radius: 50%;
     background: #22c55e;
     color: white;
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
     font-weight: bold;
+    line-height: 1;
     z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.viewed-badge::before {
+    content: "\\2714";
+    transform: translateX(1px);
 }
         .video-title {
             padding: 10px;
@@ -851,7 +859,7 @@ item.innerHTML = `
     <div class="thumbnail-wrapper">
         <img src="${thumbUrl}" alt="thumbnail" loading="lazy">
         ${isViewed(video.id)
-            ? '<div class="viewed-badge">&#10004;</div>'
+            ? '<div class="viewed-badge"></div>'
             : ''}
     </div>
     <div class="video-title">${escapeHtml(video.title)}</div>
