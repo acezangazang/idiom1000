@@ -226,6 +226,22 @@
             height: 100%;
             object-fit: cover;
         }
+.viewed-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: Highlight;
+    color: HighlightText;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 2;
+}
 
         .video-title {
             padding: 10px;
@@ -812,12 +828,22 @@
 
                 const thumbUrl = `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`;
 
-                item.innerHTML = `
-                    <div class="thumbnail-wrapper">
-                        <img src="${thumbUrl}" alt="thumbnail" loading="lazy">
-                    </div>
-                    <div class="video-title">${isViewed(video.id) ? '? ' : ''}${escapeHtml(video.title)}</div>
-                `;
+//                item.innerHTML = `
+//                    <div class="thumbnail-wrapper">
+//                        <img src="${thumbUrl}" alt="thumbnail" loading="lazy">
+//                    </div>
+//                    <div class="video-title">${isViewed(video.id) ? '&#10004; ' : ''}${escapeHtml(video.title)}</div>
+//                `;
+item.innerHTML = `
+    <div class="thumbnail-wrapper">
+        <img src="${thumbUrl}" alt="thumbnail" loading="lazy">
+        ${isViewed(video.id)
+            ? '<div class="viewed-badge">&#10004;</div>'
+            : ''}
+    </div>
+    <div class="video-title">${escapeHtml(video.title)}</div>
+`;
+
                 grid.appendChild(item);
             });
 
