@@ -232,15 +232,11 @@
         }
 
         .mobile-note-section {
-            margin-top: 10px;
-        }
-
-        .desktop-only-note {
-            display: block;
-        }
-
-        .mobile-only-note {
             display: none;
+        }
+
+        .pc-note-section {
+            display: block;
         }
 
         @media (max-width: 980px) {
@@ -314,16 +310,16 @@
                 height: 100%;
             }
 
-            .desktop-only-note {
+            .pc-note-section {
                 display: none;
             }
 
-            .mobile-only-note {
-                display: block;
-                margin: 0 0 10px 0;
+            .pc-note-section {
+                display: none;
             }
 
             .mobile-note-section {
+                display: block;
                 margin: 0 0 10px 0;
             }
 
@@ -424,16 +420,8 @@
                 height: 100%;
             }
 
-            .desktop-only-note {
-                display: none;
-            }
-
-            .mobile-only-note {
-                display: block;
-                margin: 0 0 10px 0;
-            }
-
             .mobile-note-section {
+                display: block;
                 margin: 0 0 10px 0;
             }
 
@@ -500,9 +488,8 @@
 
 
             </div>
-
-            <div class="mobile-note-section desktop-only-note">
-                <div class="current-info">
+                <div class="pc-note-section">
+                    <div class="current-info">
 
                 <p class="auto-play-note">현재 검색된 목록 순서대로 자동 연속 재생됩니다.</br>
 1000 개 될 때까지 때때로 업데이트 될 것입니다.</br>
@@ -511,12 +498,13 @@
 </p>
 
             </div>
+                </div>
+
 
         </div>
     </div>
         <div class="list-section">
-        
-            <div class="mobile-note-section mobile-only-note">
+            <div class="mobile-note-section">
                 <div class="current-info">
 
                 <p class="auto-play-note">현재 검색된 목록 순서대로 자동 연속 재생됩니다.</br>
@@ -526,6 +514,8 @@
 </p>
 
             </div>
+            </div>
+
         <div class="video-grid" id="videoGrid"></div>
 
         <div class="load-more-wrap">
