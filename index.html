@@ -258,12 +258,11 @@
     line-height: 1;
     z-index: 100;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+
+    /* 체크를 살짝 오른쪽으로 */
+    padding-left: 1px;
 }
 
-.viewed-badge::before {
-    content: "\\2714";
-    transform: translateX(1px);
-}
         .video-title {
             padding: 10px;
             font-size: 13px;
@@ -859,7 +858,7 @@ item.innerHTML = `
     <div class="thumbnail-wrapper">
         <img src="${thumbUrl}" alt="thumbnail" loading="lazy">
         ${isViewed(video.id)
-            ? '<div class="viewed-badge"></div>'
+            ? '<div class="viewed-badge">&#10004;</div>'
             : ''}
     </div>
     <div class="video-title">${escapeHtml(video.title)}</div>
