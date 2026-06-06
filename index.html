@@ -232,6 +232,14 @@
         }
 
         .mobile-note-section {
+            margin-top: 10px;
+        }
+
+        .desktop-only-note {
+            display: block;
+        }
+
+        .mobile-only-note {
             display: none;
         }
 
@@ -306,8 +314,16 @@
                 height: 100%;
             }
 
-            .mobile-note-section {
+            .desktop-only-note {
+                display: none;
+            }
+
+            .mobile-only-note {
                 display: block;
+                margin: 0 0 10px 0;
+            }
+
+            .mobile-note-section {
                 margin: 0 0 10px 0;
             }
 
@@ -408,8 +424,16 @@
                 height: 100%;
             }
 
-            .mobile-note-section {
+            .desktop-only-note {
+                display: none;
+            }
+
+            .mobile-only-note {
                 display: block;
+                margin: 0 0 10px 0;
+            }
+
+            .mobile-note-section {
                 margin: 0 0 10px 0;
             }
 
@@ -442,16 +466,14 @@
         }
     </style>
     <!-- Google Analytics 4 -->
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QWE2G2BNJG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-QWE2G2BNJG');
-</script>
+    <!-- 아래 G-QWE2G2BNJG 를 본인의 Google Analytics 측정 ID로 바꾸세요. 예: G-ABC123DEF4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWE2G2BNJG"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QWE2G2BNJG');
+    </script>
 </head>
 <body>
 
@@ -461,7 +483,7 @@
         <div class="player-section">
         <div id="main-player"></div>
 
-                <h3 id="current-playing-title">재생할 영상을 아래에서 선택하세요</h3>                <button class="next-button" onclick="playNextVideo()">다음 영상</button>
+                <h3 id="current-playing-title">재생할 영상을 아래에서 선택하세요</h3>                <button class="next-button" onclick="playNextVideo()">다음 영상 건너뛰기</button>
                 <div class="sort-buttons">
                     <button onclick="setSortMode('latest')">최신순</button>
                     <button onclick="setSortMode('oldest')">업로드순</button>
@@ -479,10 +501,7 @@
 
             </div>
 
-        </div>
-    </div>
-        <div class="list-section">
-            <div class="mobile-note-section">
+            <div class="mobile-note-section desktop-only-note">
                 <div class="current-info">
 
                 <p class="auto-play-note">현재 검색된 목록 순서대로 자동 연속 재생됩니다.</br>
@@ -492,8 +511,21 @@
 </p>
 
             </div>
-            </div>
 
+        </div>
+    </div>
+        <div class="list-section">
+        
+            <div class="mobile-note-section mobile-only-note">
+                <div class="current-info">
+
+                <p class="auto-play-note">현재 검색된 목록 순서대로 자동 연속 재생됩니다.</br>
+1000 개 될 때까지 때때로 업데이트 될 것입니다.</br>
+편하게 원하시는 시간에 공부할 수 있는 Tool이 되면 좋겠습니다.</br>
+구독해 주시고 지원해 주시는 분들께 감사드립니다.</br>
+</p>
+
+            </div>
         <div class="video-grid" id="videoGrid"></div>
 
         <div class="load-more-wrap">
