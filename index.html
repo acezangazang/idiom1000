@@ -21,29 +21,44 @@
             margin-top: 0;
         }
 
+.app-layout {
+    display: grid;
+    grid-template-columns: 600px 1fr;
+    gap: 20px;
+}
+
         .player-section {
+            position: sticky;
+            top: 0;
+            z-index: 100;
             display: flex;
-            gap: 20px;
+            flex-direction: column;
+            gap: 16px;
             background: Canvas;
             color: CanvasText;
             padding: 20px;
             border: 1px solid GrayText;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
-            margin-bottom: 20px;
-            align-items: flex-start;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            align-items: stretch;
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .list-section {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding-right: 6px;
         }
 
         #main-player {
-            flex: 0 0 auto;
-            width: 640px;
+            width: 100%;
             max-width: 100%;
             aspect-ratio: 16 / 9;
         }
 
         .side-panel {
-            flex: 1;
-            min-width: 260px;
+            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -124,7 +139,7 @@
 
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 15px;
         }
 
@@ -206,8 +221,18 @@
         }
 
         @media (max-width: 980px) {
+            .app-layout {
+                display: block;
+                height: auto;
+            }
+
             .player-section {
+                position: sticky;
+                top: 0;
                 flex-direction: column;
+                max-height: none;
+                overflow-y: visible;
+                margin-bottom: 20px;
             }
 
             #main-player {
@@ -216,6 +241,12 @@
 
             .side-panel {
                 width: 100%;
+            }
+
+            .list-section {
+                height: calc(100vh - 560px);
+                min-height: 260px;
+                overflow-y: auto;
             }
 
             .video-grid {
@@ -228,8 +259,21 @@
                 margin: 12px;
             }
 
+            .app-layout {
+                display: block;
+                height: auto;
+            }
+
             .player-section {
                 padding: 12px;
+                position: sticky;
+                top: 0;
+            }
+
+            .list-section {
+                height: calc(100vh - 520px);
+                min-height: 240px;
+                overflow-y: auto;
             }
 
             .video-grid {
@@ -243,9 +287,15 @@
 
     <h2>영어 필수 관용구 1000 개 프로젝트 아카이브 - 구독자 전용</h2>
 
-    <div class="player-section">
+    <div class="app-layout">
+        <div class="player-section">
         <div id="main-player"></div>
 
+                <h3 id="current-playing-title">재생할 영상을 아래에서 선택하세요</h3>                <button class="next-button" onclick="playNextVideo()">다음 영상 건너뛰기</button>
+                <div class="sort-buttons">
+                    <button onclick="setSortMode('latest')">최신순</button>
+                    <button onclick="setSortMode('oldest')">업로드순</button>
+                </div>
         <div class="side-panel">
             <div class="search-section">
                 <input
@@ -256,303 +306,41 @@
                     oninput="filterVideos()"
                 >
 
-                <div class="sort-buttons">
-                    <button onclick="setSortMode('latest')">최신순</button>
-                    <button onclick="setSortMode('oldest')">업로드순</button>
-                </div>
+
             </div>
 
             <div class="current-info">
-                <h3 id="current-playing-title">재생할 영상을 아래에서 선택하세요</h3>
-                <p class="auto-play-note"></br>현재 검색된 목록 순서대로 자동 연속 재생됩니다.</p>
-                <p </br>
+
+                <p class="auto-play-note">현재 검색된 목록 순서대로 자동 연속 재생됩니다.</br>
 1000 개 될 때까지 때때로 업데이트 될 것입니다.</br>
 편하게 원하시는 시간에 공부할 수 있는 Tool이 되면 좋겠습니다.</br>
-구독해 주시고 지원해 주시는 분들께 감사드립니다.</br></p>
-                <button class="next-button" onclick="playNextVideo()">다음 영상 건너뛰기</button>
+구독해 주시고 지원해 주시는 분들께 감사드립니다.</br>
+</p>
+
             </div>
         </div>
     </div>
 
-    <div class="video-grid" id="videoGrid"></div>
+        <div class="list-section">
+        <div class="video-grid" id="videoGrid"></div>
 
-    <div class="load-more-wrap">
-        <div class="result-count" id="resultCount"></div>
-        <button class="load-more-button" id="loadMoreButton" onclick="loadMoreVideos()">더 보기</button>
+        <div class="load-more-wrap">
+            <div class="result-count" id="resultCount"></div>
+            <button class="load-more-button" id="loadMoreButton" onclick="loadMoreVideos()">더 보기</button>
+        </div>
     </div>
 
     <script>
-        // 
-        const videoList = [
-//itemlist//
-{ id: 'tfG_HPfdD9k', title: "001. change of heart" },
-{ id: 'wD83Zs8o9pE', title: "002. small fortune" },
-{ id: 'IT68hGZQrfw', title: "003. set sail" },
-{ id: '7BM5SHuLQp8', title: "004. a sandwich short of a picnic" },
-{ id: 'wqA8_twiM0c', title: "005. missing link" },
-{ id: 'LFrB21Zfd_c', title: "006. keep the change" },
-{ id: 'DiGIHcls10U', title: "007. throw money at" },
-{ id: 'IkfCWBkRg8Q', title: "008. cash in on" },
-{ id: 'sQMCJeMa1Fw', title: "009. by the skin of your teeth" },
-{ id: 'yKDvqoVLC00', title: "010. as well as" },
-{ id: 'NlfEOR8u5N4', title: "011. the whole nine yards" },
-{ id: 'wpS6fr702Ms', title: "012. ring a bell" },
-{ id: 'UhJy07nVvoI', title: "013. a storm in a teacup" },
-{ id: '4cHaW9gg964', title: "014. make a killing" },
-{ id: '_ImCikwcWQ4', title: "015. pink slip" },
-{ id: '_xndrcIj7vo', title: "016. in relation to" },
-{ id: 'WZQNelAkzyw', title: "017. as good as it gets" },
-{ id: 'gzk0oupGYSc', title: "018. deadbeat" },
-{ id: 'iegUZQaamUM', title: "019. wild goose chase" },
-{ id: 'F7BVHgfRLew', title: "020. make waves" },
-{ id: 'ac7bxMKEIFs', title: "021. as cool as a cucumber" },
-{ id: '4jpWZ9eyCO8', title: "022. go bananas" },
-{ id: '7aswEN6dHy0', title: "023. rain on someone's parade" },
-{ id: 'p8dJ3HSXBdg', title: "024. apart from" },
-{ id: 'PT-s71ijSNU', title: "025. feel the pinch" },
-{ id: 'I5A7iVx5c4Q', title: "026. laugh all the way to the bank" },
-{ id: 'TnzX37TkQrM', title: "027. flunk out" },
-{ id: 'LPIBSphuO7w', title: "028. have a ball" },
-{ id: '4ibMdqtoeh4', title: "029. as tough as nails" },
-{ id: 'Won0CWAUqU0', title: "030. time's up" },
-{ id: 'ZkyukB0L4_o', title: "031. devil's advocate" },
-{ id: '36j6oCs3GFY', title: "032. broadly speaking" },
-{ id: 'NykrovIK8YQ', title: "033. apple of one's eye" },
-{ id: 'pyFauEJZShk', title: "034. keep something at bay" },
-{ id: 'XOLj_MgAwno', title: "035. work like a charm" },
-{ id: '8LNbBQfwQgQ', title: "036. milehigh club" },
-{ id: '-7ymh-P_6fY', title: "037. on the tip of my tongue" },
-{ id: 'BkzJ-Z1y_J4', title: "038. last resort" },
-{ id: 'TP1mCsl1lF4', title: "039. strike it rich" },
-{ id: 'r6ijtRh-YR4', title: "040. build a bridge and get over it" },
-{ id: 'Y7_SPQa_Yu4', title: "041. is associated with" },
-{ id: 'zy8jw0fkCW4', title: "042. at a crossroads" },
-{ id: 'H750OW3Qivc', title: "043. hand to mouth" },
-{ id: 'q9zQGWoVyxM', title: "044. foot the bill" },
-{ id: 'gpICqon5MOA', title: "045. pit stop" },
-{ id: 'FREqKflvKW4', title: "046. don't judge a book by its cover" },
-{ id: '1T57vHeB2Ys', title: "047. give a run for one's money" },
-{ id: 'Lafe5kKl_AY', title: "048. bottom line" },
-{ id: '-ZEPiaQcy4M', title: "049. all of a sudden" },
-{ id: 'lSyg-AmtSX8', title: "050. cross that bridge when you come to it" },
-{ id: 'U3cQjf-1-1w', title: "051. pay an arm and a leg" },
-{ id: 'zwp5I3urK4Y', title: "052. sink or swim" },
-{ id: 'eZPrdi8k2qQ', title: "053. blessing in disguise" },
-{ id: '-ew4l7-q2xE', title: "054. easy as pie" },
-{ id: 'EhXvoIOeYPM', title: "055. pull strings" },
-{ id: 'o59oDolJBL0', title: "056. account for" },
-{ id: 'jnhs_rnyMhE', title: "057. pack light" },
-{ id: 'xaf7I9hI17Q', title: "058. the extent to which" },
-{ id: '1AehMGDLVJE', title: "059. golden handshake" },
-{ id: 'MeKs-k0OF8w', title: "060. elephant in the room" },
-{ id: 'nqjhX-As0As', title: "061. you can't have your cake and eat it too" },
-{ id: 'WksR5lAVZyA', title: "062. wait for the dust to settle" },
-{ id: 'yNP_UxphEyM', title: "063. level playing field" },
-{ id: 'wJx8OrWyLvE', title: "064. take precedence over" },
-{ id: '3r7bEts9L3k', title: "065. brainstorm" },
-{ id: 'P-wxNxeUCD0', title: "066. peer pressure" },
-{ id: '3UgL7NLVazY', title: "067. it takes two to tango" },
-{ id: 'ywQtwJhsJBs', title: "068. born with a silver spoon" },
-{ id: '-auAmLENiqU', title: "069. paper tiger" },
-{ id: 'rFgayZNRml0', title: "070. in the long run" },
-{ id: 'rPea7etOelA', title: "071. at the expense of" },
-{ id: 'vbJXss8_nf8', title: "072. pick someone's brain" },
-{ id: 'L4sdP62gQjM', title: "073. on the same wavelength" },
-{ id: '8Nz-c-Y8JQo', title: "074. a long shot" },
-{ id: 'Z3HwxZpuumE', title: "075. make a mountain out of a molehill" },
-{ id: 'CXh-c1cxPG8', title: "076. evidence suggests that" },
-{ id: '7uoo3A9P5EQ', title: "077. give the cold shoulder" },
-{ id: '8Hhd6AG1rRk', title: "078. all hands on deck" },
-{ id: 'KiwsRu5pNOg', title: "079. for good" },
-{ id: '0_QGU5L__ag', title: "080. out of the loop" },
-{ id: 'avlY0_mhwrI', title: "081. school of thought" },
-{ id: '7vwimnyNM-4', title: "082. no pain, no gain" },
-{ id: 'nJa4qriXCrc', title: "083. in hot water" },
-{ id: 'Rxu2LZ_ZVjA', title: "084. make a bee-line for" },
-{ id: 'k1qmHXTKr8Q', title: "085. make a living" },
-{ id: '5GNotMu20SM', title: "086. win-win situation" },
-{ id: 'o63C7EUI9dA', title: "087. diamond in the rough" },
-{ id: 'IYWkqosyybM', title: "088. stingy" },
-{ id: 'oCGTwtvVq_Q', title: "089. against the clock" },
-{ id: '82YoLk6QQqY', title: "090. hard cash" },
-{ id: 'MoOdNZ_8mDk', title: "091. ignorance is bliss" },
-{ id: 'Sos6Ybg7Aaw', title: "092. take notes" },
-{ id: '3tGYDh3_RvQ', title: "093. bite off more than you can chew" },
-{ id: 'jIkwO0GHCSo', title: "094. fall through the cracks" },
-{ id: 'eleru27LPhE', title: "095. cry over spilled milk" },
-{ id: 'uL5O-EukGtg', title: "096. a stone's throw" },
-{ id: '2RDcl8WbP9E', title: "097. deal with" },
-{ id: 'nQlFybj1q0w', title: "098. piggy bank" },
-{ id: '7Qj7rgC7zFg', title: "099. jump the gun" },
-{ id: 'FiZjF9oSH5Q', title: "100. in a similar vein" },
-{ id: '7WcCCjjPwng', title: "101. behind the scenes" },
-{ id: '3ytaAZTEckY', title: "102. go back to the drawing board" },
-{ id: 'Nsd-pr-R2co', title: "103. put all your eggs in one basket" },
-{ id: 'wYPxKCsdoi4', title: "104. long story short" },
-{ id: 'QVNDY3ZFFi8', title: "105. as luck would have it" },
-{ id: 'O9EcrhWIlcw', title: "106. drop out" },
-{ id: '4UtCoPhf9M8', title: "107. the school of hard knocks" },
-{ id: 'snwkO3Z5IUM', title: "108. spill the beans" },
-{ id: '38_fmgL7RhI', title: "109. you only live once, YOLO" },
-{ id: 'P2RtqKBI1gs', title: "110. the early bird gets the worm" },
-{ id: 'HWdpL9Vh-t0', title: "111. go down in flames" },
-{ id: '8a4cfjxoYVo', title: "112. the point is that" },
-{ id: 'TRoLb3wmXRc', title: "113. old school" },
-{ id: 'RJgptwjw7EY', title: "114. bad blood" },
-{ id: 'xoWkbQm6XqA', title: "115. up the ante" },
-{ id: 'NeV6BqOPCiw', title: "116. jump on the bandwagon" },
-{ id: 'Oo8Me1qzyWA', title: "117. as plain as day" },
-{ id: '7ZoD04mAvUU', title: "118. fast buck" },
-{ id: 'YP66ojgR9sI', title: "119. chip off the old block" },
-{ id: 'P7eIN1ptLRA', title: "120. break a leg" },
-{ id: 'QzMk7avtcx4', title: "121. comprise of" },
-{ id: 'KCC-_I_8vqY', title: "122. get out of your system" },
-{ id: '866khVhb2rg', title: "123. curiosity killed the cat" },
-{ id: 'czUxva_5-eU', title: "124. up to speed" },
-{ id: 'PH16taMOawM', title: "125. cram for a test" },
-{ id: 'G1no7EAlHCg', title: "126. off the beaten path" },
-{ id: 'gEyzyde9HOg', title: "127. get out of hand" },
-{ id: 'YnX2x-eNCWg', title: "128. live on a shoe string" },
-{ id: 'XgmV6n-wsUQ', title: "129. save someone's bacon" },
-{ id: 'ePD7Urvozks', title: "130. live it up" },
-{ id: 'NjrnKGWY8Ks', title: "131. as sick as a dog" },
-{ id: '6A_NOaJkVwE', title: "132. wrap it up" },
-{ id: 'Yn1mwVhpwRs', title: "133. further research is required" },
-{ id: 'n-HMS-0l798', title: "134. get the ball rolling" },
-{ id: '3jdZNFc7oMw', title: "135. whirlwind tour" },
-{ id: '49XnUCwYs5Y', title: "136. wouldn't be caught dead" },
-{ id: 'WYa_8P1zk1c', title: "137. under the thumb" },
-{ id: 'x5v-QUhLz8M', title: "138. ballpark figure" },
-{ id: 'tSLKG0JNecY', title: "139. get something off your chest" },
-{ id: 'iR4sBQ5Zag4', title: "140. highway robbery" },
-{ id: 'GXpP3svgqQw', title: "141. die on the vine" },
-{ id: 'JMDHEzDaqs4', title: "142. get your feet wet" },
-{ id: 'WkRorvTZ1s4', title: "143. put on one's thinking cap" },
-{ id: '1TfXa9NjrWs', title: "144. copycat" },
-{ id: 'HCY6Aoz_Ywo', title: "145. from the ground up" },
-{ id: '82IxBAGK2K0', title: "146. it's a steal" },
-{ id: 'nuaWFhHeS0o', title: "147. easy does it" },
-{ id: '3I1oCL_ZMDo', title: "148. armed to the teeth" },
-{ id: 'BG33r3RyZIo', title: "149. in deep water" },
-{ id: 'K-OzHIPPI0s', title: "150. stand up and be counted" },
-{ id: 'fnUEtPey3Q4', title: "151. put in one's two cents" },
-{ id: 'BVvEwoFFw0c', title: "152. be on edge" },
-{ id: 'pniOLXLVhCA', title: "153. don't count your chickens before they hatch" },
-{ id: 'xiOMd_0oimk', title: "154. x marks the spot" },
-{ id: 'BTZA9x6be5U', title: "155. big picture" },
-{ id: 'pvT0k0Wy0rA', title: "156. with regard to" },
-{ id: '_0z8I5LaS8U', title: "157. the tip of the iceberg" },
-{ id: '5KHHX24guW8', title: "158. open book" },
-{ id: 'XU4La1z8MMA', title: "159. back-to-back" },
-{ id: 'wzlpYUH1i50', title: "160. the scenic route" },
-{ id: 'glSp7w1-F7c', title: "161. ahead of time" },
-{ id: '_6V1ja8R-10', title: "162. the devil is in the details" },
-{ id: '5bPsGMrR3iA', title: "163. shop till you drop" },
-{ id: 'kIzO2w5itak', title: "164. touch base" },
-{ id: 'VJdI0BT8tMg', title: "165. break even" },
-{ id: 'xvoJ-IVRJ8A', title: "166. get your act together" },
-{ id: 'eYsy-EY9IdM', title: "167. read between the lines" },
-{ id: 'XEMOJOwY1JU', title: "168. ace a test" },
-{ id: 'JDs5DeYE2cw', title: "169. off the cuff" },
-{ id: 'hHe12qbcQNg', title: "170. pocket change" },
-{ id: 'SeDnUoOURvk', title: "171. a picture is worth a thousand words" },
-{ id: 'qtHos0I6Y-0', title: "172. small world" },
-{ id: 'FtmJCpXqjCs', title: "173. loaded" },
-{ id: 'nu5obcXVWXQ', title: "174. hit the nail on the head" },
-{ id: 'RtUGBMkfqOw', title: "175. talk shop" },
-{ id: 'asf6D4zWHac', title: "176. red tape" },
-{ id: 'w7I7x2_xY-s', title: "177. get a taste of medicine" },
-{ id: '-wVhirhacmY', title: "178. follow in someone's footsteps" },
-{ id: 'sP7hM9pvm-c', title: "179. you get what you pay for" },
-{ id: 'iDJn5xQM1ds', title: "180. bite the bullet" },
-{ id: 'xln1xWgwzyo', title: "181. road to riches" },
-{ id: 'dALa_L4_iGY', title: "182. add insult to injury" },
-{ id: 'qXPQwoynG0g', title: "183. at the end of the day" },
-{ id: 'DbX6bbMNF50', title: "184. in the dark" },
-{ id: 'Sa5pOHV6Ths', title: "185. rock the boat" },
-{ id: '4l-8nDKD9YQ', title: "186. a growing body of evidence" },
-{ id: 'DacXlyzT8OE', title: "187. based on the" },
-{ id: 'yCAsfgcIhkM', title: "188. on the house" },
-{ id: 'ZMJU48GzQdE', title: "189. good things come to those who wait" },
-{ id: '9kh4_l168ik', title: "190. prior to" },
-{ id: 'ibeiZu06oac', title: "191. off the hook" },
-{ id: 'y8BYHm6fJHk', title: "192. under the circumstances" },
-{ id: 'eyBMVKus8sU', title: "193. bend over backwards" },
-{ id: 'Gbyl8od6aKg', title: "194. buy time" },
-{ id: 'VdQd_Agg0N0', title: "195. this suggests that" },
-{ id: 'MmpPrlBt_LU', title: "196. lose track of time" },
-{ id: 'vlVBU-1Cet4', title: "197. the purpose of this research" },
-{ id: 'eXgiLco58GM', title: "198. pour money down the drain" },
-{ id: '0UvHa67z88c', title: "199. point out" },
-{ id: 'tK1UI_7Y7Jk', title: "200. pin money" },
-{ id: 'q0JDse_wFNY', title: "201. the ball is in your court" },
-{ id: 'uZRLXK7CH5c', title: "202. over the top" },
-{ id: 'OPXTNm2pHiA', title: "203. know the ropes" },
-{ id: 'gNL5e7tnais', title: "204. wear your heart on your sleeve" },
-{ id: 'STtuyuT6qdc', title: "205. knowledge is power" },
-{ id: 'tDvuv1wq-xk', title: "206. a dime a dozen" },
-{ id: 'BwkDyctf85c', title: "207. pedal to the metal" },
-{ id: '1G8E4d1fm0I', title: "208. in a bind" },
-{ id: 'TzZlMlCvbKg', title: "209. cut to the bone" },
-{ id: 'cFyOvsWoZ9Y', title: "210. a lack of" },
-{ id: 'jWjOrz7DwNI', title: "211. go the extra mile" },
-{ id: 'jOqUbl4usuQ', title: "212. breezed through" },
-{ id: 'ank184PmPtE', title: "213. don't cry over spilled milk" },
-{ id: '3NRH-nOxVwg', title: "214. drive someone up the wall" },
-{ id: 'OL2kjeJcdD4', title: "215. by all means" },
-{ id: 'yhNDjzXjH4M', title: "216. the best of both worlds" },
-{ id: 'Li5eWK5iolw', title: "217. cut ties" },
-{ id: 'wYg6zDtuwaA', title: "218. catch the sun" },
-{ id: 'z_KpHsFrVc8', title: "219. it should be noted that" },
-{ id: 'h4U3_dUiz2c', title: "220. actions speak louder than words" },
-{ id: 'yYylw3yOtp4', title: "221. take for granted" },
-{ id: 'uFmwzVllTSc', title: "222. pass with flying colors" },
-{ id: 'CxV9H1EG8fY', title: "223. so far so good" },
-{ id: '5pV2q6UP5Tg', title: "224. travel light" },
-{ id: '3t6LwPV3dk4', title: "225. what goes around comes around" },
-{ id: 'y4s4C_X-XcA', title: "226. learning curve" },
-{ id: 'dVq8VW0Pmcc', title: "227. degrees of separation" },
-{ id: 'F24WkIVHl98', title: "228. clear the air" },
-{ id: 'TFwxB0HJdpc', title: "229. keep me in the loop" },
-{ id: 'qZCgq0wdwQs', title: "230. call the shots" },
-{ id: 'x26sa9aDPAI', title: "231. keep your eyes peeled" },
-{ id: 'SUNDNYZChNw', title: "232. provide insight into" },
-{ id: 'hsCpS6u6uu4', title: "233. up in the air" },
-{ id: 'xlZHPlIzx8o', title: "234. as a whole" },
-{ id: '-NQMvCgl6PU', title: "235. pull yourself together" },
-{ id: 'S2_PKmMb-uU', title: "236. in black and white" },
-{ id: 'kFqoLij1AXA', title: "237. blow your own trumpet" },
-{ id: 'ZSZ_gknDSQo', title: "238. no pain no gain" },
-{ id: 'Ox2np-7E-zA', title: "239. all the same" },
-{ id: 'fFmJ6PY1Scg', title: "240. close the deal" },
-{ id: 'f0927noHrgY', title: "241. learn the ropes" },
-{ id: 'PFXSqHJpgAI', title: "242. regardless of" },
-{ id: '3C4j6t425KQ', title: "243. contrary to" },
-{ id: '_SXMPcPgPFE', title: "244. go with the flow" },
-{ id: 'u2U8TuGZi6Y', title: "245. out of one's depth" },
-{ id: 'fBgwCEROjMc', title: "246. get a handle on" },
-{ id: 'Pk6JDBb7w-c', title: "247. under one's belt" },
-{ id: 'MozTjStK8oY', title: "248. with this in mind" },
-{ id: 'FHv1f3J_V5E', title: "249. home from home" },
-{ id: 'KrtAYpls6_M', title: "250. cold call" },
-{ id: 'Uha2TA9cKRM', title: "251. like two peas in a pod" },
-{ id: 'svHFHojQi3A', title: "252. saved by the bell" },
-{ id: 'IPMj5wH-UEw', title: "253. to the tune of" },
-{ id: 'gbEBBjxFEOc', title: "254. feel like a million dollars" },
-{ id: '91Qem7Pr5J4', title: "255. down payment" },
-{ id: '3ahiOy3I1W4', title: "256. bite your tongue" },
-{ id: 'g3JNHMf8eOM', title: "257. keep one's head above water" },
-{ id: 'nPAT49Arae8', title: "258. on the grounds that" },
-{ id: 'NsJuts4FHJo', title: "259. beat around the bush" },
-        ];
-
+        const ITEMLIST_URL = 'itemlist.txt';
         const PAGE_SIZE = 100;
 
+        let videoList = [];
         let sortMode = 'latest';
-        let filteredList = [...videoList].reverse();
+        let filteredList = [];
         let currentTrackIndex = 0;
         let visibleCount = PAGE_SIZE;
         let player;
+        let youtubeApiReady = false;
 
         // API 로드
         const tag = document.createElement('script');
@@ -561,7 +349,12 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         function onYouTubeIframeAPIReady() {
-            if (filteredList.length === 0) return;
+            youtubeApiReady = true;
+            initPlayer();
+        }
+
+        function initPlayer() {
+            if (!youtubeApiReady || filteredList.length === 0 || player) return;
 
             const lastVideoId = localStorage.getItem('lastVideoId');
             const lastVideo = videoList.find(v => v.id === lastVideoId);
@@ -593,6 +386,69 @@
             }
         }
 
+        function parseItemList(text) {
+            return text
+                .split(/\r?\n/)
+                .map(line => line.trim())
+                .filter(line => line.length > 0)
+                .filter(line => !line.startsWith('#'))
+                .map(line => {
+                    const parts = line.split('|');
+                    const id = (parts.shift() || '').trim();
+                    const title = parts.join('|').trim();
+
+                    if (!id || !title) return null;
+
+                    return { id, title };
+                })
+                .filter(Boolean);
+        }
+
+        async function loadVideoList() {
+            const grid = document.getElementById('videoGrid');
+            const resultCount = document.getElementById('resultCount');
+            const loadMoreButton = document.getElementById('loadMoreButton');
+
+            try {
+                if (grid) {
+                    grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; color:GrayText;">동영상 목록을 불러오는 중입니다...</p>';
+                }
+                if (resultCount) resultCount.innerText = '';
+                if (loadMoreButton) loadMoreButton.hidden = true;
+
+                const response = await fetch(ITEMLIST_URL + '?v=' + Date.now());
+
+                if (!response.ok) {
+                    throw new Error('itemlist.txt 파일을 불러오지 못했습니다.');
+                }
+
+                const text = await response.text();
+                videoList = parseItemList(text);
+                filteredList = getSortedList(videoList);
+                visibleCount = PAGE_SIZE;
+                currentTrackIndex = 0;
+
+                renderVideoGrid(filteredList);
+                initPlayer();
+            } catch (error) {
+                if (grid) {
+                    grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; color:GrayText;">itemlist.txt 파일을 찾을 수 없거나 읽을 수 없습니다.</p>';
+                }
+                if (resultCount) resultCount.innerText = '총 0개';
+                if (loadMoreButton) loadMoreButton.hidden = true;
+                console.error(error);
+            }
+        }
+
+        function escapeHtml(text) {
+            return String(text)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
         function renderVideoGrid(list) {
             const grid = document.getElementById('videoGrid');
             const loadMoreButton = document.getElementById('loadMoreButton');
@@ -620,7 +476,7 @@
                     <div class="thumbnail-wrapper">
                         <img src="${thumbUrl}" alt="thumbnail" loading="lazy">
                     </div>
-                    <div class="video-title">${video.title}</div>
+                    <div class="video-title">${escapeHtml(video.title)}</div>
                 `;
                 grid.appendChild(item);
             });
@@ -667,6 +523,9 @@
         function selectVideo(index) {
             if (filteredList.length === 0) return;
 
+            const listSection = document.querySelector('.list-section');
+            const listScrollTop = listSection ? listSection.scrollTop : 0;
+
             currentTrackIndex = index;
             const video = filteredList[currentTrackIndex];
 
@@ -674,6 +533,10 @@
                 localStorage.setItem('lastVideoId', video.id);
                 document.getElementById('current-playing-title').innerText = video.title;
                 player.loadVideoById(video.id);
+
+                if (listSection) {
+                    listSection.scrollTop = listScrollTop;
+                }
             }
         }
 
@@ -691,8 +554,7 @@
         }
 
         window.onload = function() {
-            filteredList = getSortedList(videoList);
-            renderVideoGrid(filteredList);
+            loadVideoList();
         };
     </script>
 </body>
