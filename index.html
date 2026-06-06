@@ -114,6 +114,44 @@
             filter: brightness(0.95);
         }
 
+        .progress-random-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr 0.8fr;
+            gap: 8px;
+            margin-top: 0;
+            align-items: stretch;
+        }
+
+        .progress-count {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 10px;
+            border: 1px solid GrayText;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            color: CanvasText;
+            background: Canvas;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .progress-random-row button {
+            padding: 8px 10px;
+            border: 1px solid GrayText;
+            border-radius: 20px;
+            background: ButtonFace;
+            color: ButtonText;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .progress-random-row button:hover {
+            filter: brightness(0.95);
+        }
+
         .current-info {
             display: flex;
             flex-direction: column;
@@ -167,6 +205,10 @@
         .video-item:hover {
             transform: scale(1.03);
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .video-item.viewed {
+            opacity: 0.72;
         }
 
         .thumbnail-wrapper {
@@ -293,6 +335,19 @@
                 white-space: nowrap;
             }
 
+            .progress-random-row {
+                order: 5;
+                grid-column: 1 / -1;
+                grid-template-columns: 1.2fr 0.8fr 1.1fr 0.8fr;
+                gap: 8px;
+            }
+
+            .progress-count,
+            .progress-random-row button {
+                padding: 8px 8px;
+                font-size: 13px;
+            }
+
             .side-panel {
                 order: 4;
                 grid-column: 4;
@@ -407,6 +462,19 @@
                 white-space: nowrap;
             }
 
+            .progress-random-row {
+                order: 5;
+                grid-column: 1 / -1;
+                grid-template-columns: 1.1fr 0.75fr 1.15fr 0.75fr;
+                gap: 6px;
+            }
+
+            .progress-count,
+            .progress-random-row button {
+                padding: 7px 4px;
+                font-size: 11px;
+            }
+
             .side-panel {
                 order: 4;
                 grid-column: 4;
@@ -471,10 +539,16 @@
         <div class="player-section">
         <div id="main-player"></div>
 
-                <h3 id="current-playing-title">재생할 영상을 아래에서 선택하세요</h3>                <button class="next-button" onclick="playNextVideo()">다음 영상</button>
+                <h3 id="current-playing-title">재생할 영상을 아래에서 선택하세요</h3>                <button class="next-button" onclick="playNextVideo()">다음 영상 건너뛰기</button>
                 <div class="sort-buttons">
                     <button onclick="setSortMode('latest')">최신순</button>
                     <button onclick="setSortMode('oldest')">업로드순</button>
+                </div>
+                <div class="progress-random-row">
+                    <div class="progress-count" id="progressCount">전체 0 | 시청 0</div>
+                    <button onclick="playRandomVideo()">랜덤</button>
+                    <button onclick="playUnseenRandomVideo()">미시청 랜덤</button>
+                    <button onclick="resetViewedVideos()">초기화</button>
                 </div>
         <div class="side-panel">
             <div class="search-section">
@@ -623,6 +697,7 @@
                 currentTrackIndex = 0;
 
                 renderVideoGrid(filteredList);
+                updateProgressCount();
                 initPlayer();
             } catch (error) {
                 if (grid) {
@@ -643,6 +718,77 @@
                 .replaceAll("'", '&#039;');
         }
 
+        function viewedKey(videoId) {
+            return 'viewed_' + videoId;
+        }
+
+        function isViewed(videoId) {
+            return localStorage.getItem(viewedKey(videoId)) === '1';
+        }
+
+        function markViewed(videoId) {
+            if (!videoId) return;
+            localStorage.setItem(viewedKey(videoId), '1');
+            updateProgressCount();
+        }
+
+        function getViewedCount() {
+            return videoList.filter(video => isViewed(video.id)).length;
+        }
+
+        function updateProgressCount() {
+            const progressCount = document.getElementById('progressCount');
+            if (!progressCount) return;
+
+            progressCount.innerText = `전체 ${videoList.length} | 시청 ${getViewedCount()}`;
+        }
+
+        function playRandomVideo() {
+            if (filteredList.length === 0) return;
+
+            if (filteredList.length === 1) {
+                selectVideo(0);
+                return;
+            }
+
+            let randomIndex;
+
+            do {
+                randomIndex = Math.floor(Math.random() * filteredList.length);
+            } while (randomIndex === currentTrackIndex);
+
+            selectVideo(randomIndex);
+        }
+
+        function playUnseenRandomVideo() {
+            if (filteredList.length === 0) return;
+
+            const unseenList = filteredList.filter(video => !isViewed(video.id));
+
+            if (unseenList.length === 0) {
+                alert('축하합니다! 현재 목록의 모든 영상을 한 번 이상 시청했습니다. 필요하면 초기화 후 다시 시작할 수 있습니다.');
+                return;
+            }
+
+            const randomVideo = unseenList[Math.floor(Math.random() * unseenList.length)];
+            const randomIndex = filteredList.findIndex(video => video.id === randomVideo.id);
+
+            if (randomIndex >= 0) {
+                selectVideo(randomIndex);
+            }
+        }
+
+        function resetViewedVideos() {
+            if (!confirm('시청 기록을 초기화할까요?')) return;
+
+            videoList.forEach(video => {
+                localStorage.removeItem(viewedKey(video.id));
+            });
+
+            updateProgressCount();
+            renderVideoGrid(filteredList);
+        }
+
         function renderVideoGrid(list) {
             const grid = document.getElementById('videoGrid');
             const loadMoreButton = document.getElementById('loadMoreButton');
@@ -661,7 +807,7 @@
 
             visibleList.forEach((video, index) => {
                 const item = document.createElement('div');
-                item.className = 'video-item';
+                item.className = isViewed(video.id) ? 'video-item viewed' : 'video-item';
                 item.onclick = () => selectVideo(index);
 
                 const thumbUrl = `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`;
@@ -670,7 +816,7 @@
                     <div class="thumbnail-wrapper">
                         <img src="${thumbUrl}" alt="thumbnail" loading="lazy">
                     </div>
-                    <div class="video-title">${escapeHtml(video.title)}</div>
+                    <div class="video-title">${isViewed(video.id) ? '✓ ' : ''}${escapeHtml(video.title)}</div>
                 `;
                 grid.appendChild(item);
             });
@@ -706,6 +852,7 @@
 
             visibleCount = PAGE_SIZE;
             renderVideoGrid(filteredList);
+            updateProgressCount();
             currentTrackIndex = 0;
         }
 
@@ -725,8 +872,10 @@
 
             if (player && video) {
                 localStorage.setItem('lastVideoId', video.id);
+                markViewed(video.id);
                 document.getElementById('current-playing-title').innerText = video.title;
                 player.loadVideoById(video.id);
+                renderVideoGrid(filteredList);
 
                 if (listSection) {
                     listSection.scrollTop = listScrollTop;
