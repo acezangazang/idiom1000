@@ -737,6 +737,7 @@
             if (filteredList[currentTrackIndex]) {
                 document.getElementById('current-playing-title').innerText =
                     filteredList[currentTrackIndex].title;
+                ensureCurrentVideoVisible();
             }
         }
 
@@ -893,6 +894,7 @@
             visibleList.forEach((video, index) => {
                 const item = document.createElement('div');
                 item.className = isViewed(video.id) ? 'video-item viewed' : 'video-item';
+                item.dataset.videoId = video.id;
                 item.onclick = () => selectVideo(index);
 
                 const thumbUrl = `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`;
@@ -919,6 +921,30 @@ item.innerHTML = `
             const shownCount = Math.min(visibleCount, list.length);
             resultCount.innerText = `총 ${list.length}개 중 ${shownCount}개 표시`;
             loadMoreButton.hidden = shownCount >= list.length;
+        }
+
+        function ensureCurrentVideoVisible() {
+            const currentVideo = filteredList[currentTrackIndex];
+            if (!currentVideo) return;
+
+            if (currentTrackIndex >= visibleCount) {
+                visibleCount =
+                    Math.ceil((currentTrackIndex + 1) / PAGE_SIZE) * PAGE_SIZE;
+                renderVideoGrid(filteredList);
+            }
+
+            requestAnimationFrame(() => {
+                const currentItem = Array.from(
+                    document.querySelectorAll('.video-item')
+                ).find(item => item.dataset.videoId === currentVideo.id);
+
+                if (currentItem) {
+                    currentItem.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
+                }
+            });
         }
 
         function getSortedList(list) {
@@ -989,6 +1015,8 @@ item.innerHTML = `
                 if (listSection) {
                     listSection.scrollTop = listScrollTop;
                 }
+
+                ensureCurrentVideoVisible();
             }
         }
 
