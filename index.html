@@ -21,6 +21,18 @@
             margin-top: 0;
         }
 
+        .page-version {
+            margin-left: 8px;
+            font-size: 11px;
+            font-weight: normal;
+            opacity: 0.55;
+            white-space: nowrap;
+        }
+
+        .mobile-version {
+            display: none;
+        }
+
 .app-layout {
     display: grid;
     grid-template-columns: 600px 1fr;
@@ -475,6 +487,22 @@
                 display: none;
             }
 
+            .mobile-version {
+                position: fixed;
+                right: 8px;
+                bottom: 6px;
+                z-index: 200;
+                display: block;
+                padding: 2px 5px;
+                border-radius: 4px;
+                background: color-mix(in srgb, Canvas 80%, transparent);
+                color: CanvasText;
+                font-size: 9px;
+                line-height: 1.2;
+                opacity: 0.55;
+                pointer-events: none;
+            }
+
             .app-layout {
                 display: block;
                 height: auto;
@@ -616,7 +644,8 @@
 </head>
 <body>
 
-    <h2>영어 필수 관용구 1000개 프로젝트 아카이브 - 구독자 전용</h2>
+    <h2>영어 필수 관용구 1000개 프로젝트 아카이브 - 구독자 전용<span class="page-version">v2026.07.26</span></h2>
+    <span class="mobile-version" aria-label="버전">v2026.07.26</span>
 
     <div class="app-layout">
         <div class="player-section">
